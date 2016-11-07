@@ -3,6 +3,8 @@
 ### 操作指令
 ADD [DOWNLOAD/UPLOAD] 任务名 任务地址 下载到本地路径 MD5    例如： ADD DOWNLOAD 测试任务名1 http://127.0.0.1/ubuntu16.iso c:\downloads\ubuntu16.iso s3d234s445a22e32324daf88
 DEL  任务名                                                      例如： DEL   测试任务名1
+PAUSE 
+RESUME
 
 
 ### 任务状态

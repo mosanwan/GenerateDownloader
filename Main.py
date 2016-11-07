@@ -21,6 +21,16 @@ class DownloadManager:
 			self.add_mission(ca)
 		if cmd_name == "DEL":
 			self.delete_mission(ca)
+		if cmd_name == "PAUSE":
+			self.pause_mission(ca)
+
+	def pause_mission(self,args):  # 暂停一个任务
+		mission_name = args[0]
+		try:
+			m = self.missions_by_name[mission_name]
+			m.command = "PAUSE"
+		except Exception as ex:
+			print(ex)
 
 	def delete_mission(self, args):
 		print("删除任务", args)
@@ -84,6 +94,7 @@ class DownloadManager:
 					mission_status += str(m.upload_size) + " "
 					mission_status += str(m.url) + " "
 					mission_status += str(m.file_path) + " "
+					mission_status += str(m.md5str) + " "
 					mission_status += "\n"
 					status.append(mission_status)
 				# print(m)
@@ -106,6 +117,18 @@ class DownloadManager:
 			self.save_config_file()
 			time.sleep(0.8)
 
+	def load_pre_config(self):
+		try:
+			with open("DownloadStatus.cfg","r",encoding="utf-8") as file:
+				status_str = file.read()
+				status_str = status_str[0:len(status_str)-1]
+				status = status_str.split("\n")
+				for statu in status:
+					sa = statu.split(" ")
+					m = Utilites.Mission(sa[0], sa[7], sa[8], sa[2], sa[9])
+		except FileNotFoundError as _:
+			pass
+
 	def test(self):
 		pass
 
@@ -115,5 +138,6 @@ if __name__ == "__main__":
 
 	print(os.getcwd())
 	manager = DownloadManager()
+	manager.load_pre_config()
 	manager.start()
 	manager.test()

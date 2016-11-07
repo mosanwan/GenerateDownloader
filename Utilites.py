@@ -10,6 +10,6 @@ class Mission:
 		self.content_uploaded = 0
 		self.assigned = False
 		self.control_type = control_type
-
+		self.command = "None"
 		self.status = "WAITING"
 		#  任务状态 分别有 WAITTING，DOWNLOADING，UPLOADING，PAUSED，COMPLETED, EEROR
