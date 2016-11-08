@@ -23,8 +23,19 @@ class DownloadManager:
 			self.delete_mission(ca)
 		if cmd_name == "PAUSE":
 			self.pause_mission(ca)
+		if cmd_name == "RESUME":
+			self.resume_mission(ca)
 
-	def pause_mission(self,args):  # 暂停一个任务
+	def resume_mission(self, args):
+		mission_name = args[0]
+		try:
+			m = self.missions_by_name[mission_name]
+			if m.status == "PAUSED":
+				m.status = "WAITTING"
+		except Exception as ex:
+			pass
+
+	def pause_mission(self, args):  # 暂停一个任务
 		mission_name = args[0]
 		try:
 			m = self.missions_by_name[mission_name]
@@ -63,6 +74,15 @@ class DownloadManager:
 					m.assigned = True
 					del self.new_missions[0]
 					break
+					return
+		else:
+			for m in self.missions:
+				if m.status == "WAITTING" or m.status == "DOWNLOADING" \
+						or m.status == "UPLOADING":
+					for t in self.thread_arr:
+						if not t.isBusy:
+							t.exec(m)
+							return
 
 	def read_config_file(self):
 		try:
@@ -85,16 +105,16 @@ class DownloadManager:
 			with open("DownloadStatus.cfg", "w", encoding='utf-8') as file:
 				status = []
 				for m in self.missions:
-					mission_status = m.name+" "
-					mission_status += m.status+" "
-					mission_status += m.control_type+" "
-					mission_status += str(m.content_download) + " "
-					mission_status += str(m.content_length)+" "
-					mission_status += str(m.content_uploaded) + " "
-					mission_status += str(m.upload_size) + " "
-					mission_status += str(m.url) + " "
-					mission_status += str(m.file_path) + " "
-					mission_status += str(m.md5str) + " "
+					mission_status = m.name + " "  # 0
+					mission_status += m.status + " "  # 1
+					mission_status += m.control_type + " "  # 2
+					mission_status += str(m.content_download) + " "  # 3
+					mission_status += str(m.content_length) + " "  # 4
+					mission_status += str(m.content_uploaded) + " "  # 5
+					mission_status += str(m.upload_size) + " "  # 6
+					mission_status += str(m.url) + " "  # 7
+					mission_status += str(m.file_path) + " "  # 8
+					mission_status += str(m.md5str) + " "  # 9
 					mission_status += "\n"
 					status.append(mission_status)
 				# print(m)
@@ -119,13 +139,25 @@ class DownloadManager:
 
 	def load_pre_config(self):
 		try:
-			with open("DownloadStatus.cfg","r",encoding="utf-8") as file:
+			with open("DownloadStatus.cfg", "r", encoding="utf-8") as file:
 				status_str = file.read()
-				status_str = status_str[0:len(status_str)-1]
+				status_str = status_str[0:len(status_str) - 1]
 				status = status_str.split("\n")
 				for statu in status:
-					sa = statu.split(" ")
-					m = Utilites.Mission(sa[0], sa[7], sa[8], sa[2], sa[9])
+					if len(statu) > 10:
+						sa = statu.split(" ")
+						try:
+							m = Utilites.Mission(sa[0], sa[7], sa[8], sa[2], sa[9])
+							m.status = sa[1]
+							m.content_download = int(sa[3])
+							m.content_length = int(sa[4])
+							m.content_uploaded = int(sa[5])
+							m.upload_size = int(sa[6])
+							self.missions.append(m)
+							self.missions_by_name[m.name] = m
+						except Exception as ex:
+							print("read pre config error", ex)
+				self.distribution_mission()
 		except FileNotFoundError as _:
 			pass
 
