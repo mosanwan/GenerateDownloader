@@ -15,9 +15,9 @@ RESUME
 1、任务名是唯一值，相当于id. 如果尝试添加一个已经存在的任务，则会忽略此次操作
 
 
-ADD DOWNLOAD 测试任务名1 http://192.168.1.7:8099/ubuntu16.iso d:/downloads/ubuntu16.iso
-ADD DOWNLOAD 测试任务名2 http://192.168.1.7:8099/ubuntu16.iso d:/downloads/ubuntu17.iso
-ADD DOWNLOAD 测试任务名3 http://192.168.1.7:8099/ubuntu16.iso d:/downloads/ubuntu18.iso
+ADD DOWNLOAD 测试任务名1 http://192.168.1.7:8099/ubuntu16.iso d:/downloads/BC2.zip
+ADD DOWNLOAD 测试任务名2 http://192.168.1.7:8099/ubuntu16.iso d:/downloads/BC3.zip
+ADD DOWNLOAD 测试任务名3 http://192.168.1.7:8099/ubuntu16.iso d:/downloads/BC1.zip
 
 
 ADD DOWNLOAD 测试任务名4 http://192.168.1.7:8099/BCompare4.zip d:/downloads/BC4.zip
@@ -25,3 +25,5 @@ ADD DOWNLOAD 测试任务名4 http://192.168.1.7:8099/BCompare4.zip d:/downloads
 PAUSE 测试任务名4
 
 RESUME 测试任务名4
+
+DEL 测试任务名4

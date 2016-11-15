@@ -1,0 +1,1 @@
+python -m PyInstaller Main.py -F -w

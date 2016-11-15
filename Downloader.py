@@ -35,6 +35,13 @@ class DownloaderThread(threading.Thread):
 	def start_upload(self):
 		pass
 
+	def release_me(self):
+		self.current_mission.status == "ERROR"
+		self.current_mission.thread = None
+		self.current_mission.assigned = False
+		self.isBusy = False
+		self.current_mission = None
+
 	def start_download(self):
 		self.isBusy = True
 		self.current_mission.status = "DOWNLOADING"
@@ -50,18 +57,23 @@ class DownloaderThread(threading.Thread):
 						if self.current_mission.command == "PAUSE":
 							self.current_mission.command = "None"
 							self.current_mission.status = "PAUSED"
-							self.current_mission.thread = None
-							self.current_mission.assigned = False
-							self.isBusy = False
-							self.current_mission = None
+							self.release_me()
+							file.close()
+							return
+						if self.current_mission.command == "DEL":
+							self.current_mission.command = "None"
+							self.current_mission.status = "DEL"
+							self.release_me()
+							file.close()
 							return
 						if file.write(data):
 							self.current_mission.content_download += len(data)
 							print(str(int(self.current_mission.content_download / self.current_mission.content_length * 100)) + "%")
 						else:
 							print("写入文件失败")
-							self.current_mission.status == "ERROR"
-							break
+							self.release_me()
+							file.close()
+							return
 					if self.current_mission.content_download == self.current_mission.content_length:
 						print("mission downloaded")
 						file.close()
@@ -70,6 +82,7 @@ class DownloaderThread(threading.Thread):
 							self.current_mission.status = "COMPLETED"
 						else:
 							os.remove(self.current_mission.file_path + ".temp")
+						file.close()
 						self.end_download()
 			except Exception as ex:
 				print(ex)
@@ -77,7 +90,6 @@ class DownloaderThread(threading.Thread):
 				self.end_download()
 
 	def end_download(self):
-		self.current_mission = None
 		self.isBusy = False
 
 	def validate_content(self):
