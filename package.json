@@ -1,0 +1,13 @@
+{
+  "name": "nurl",
+  "version": "1.0.0",
+  "description": "url",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc":"tsc",
+    "tsc:w":"tsc -w"
+  },
+  "author": "",
+  "license": "ISC"
+}
