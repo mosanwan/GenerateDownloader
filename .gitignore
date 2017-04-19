@@ -1,2 +1,6 @@
 tmp/
 *.map
+node_modules/
+node.exe
+build/
+*.cfg

@@ -4,8 +4,14 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceRoot}/index.js"
+            "name": "Test",
+            "program": "${workspaceRoot}/build/test.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Main",
+            "program": "${workspaceRoot}/build/main.js"
         }
     ],
     "compounds": []

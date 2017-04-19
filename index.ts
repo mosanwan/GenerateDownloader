@@ -1,15 +1,20 @@
 
+import * as async from 'async'
 
-class MyClass{
-    area:number;
-    color:string;
-    constructor(name:string,width:number,height:number){
-        this.area = width*height;
-        this.color = name;
+let i = 100;
+async.parallel([
+    function(cb){
+        console.log(i)
+        i = 9;
+    },
+    function(cb){
+        console.log(i)
+        i = 10
+    },
+    function(){
+        console.log(i)
+        i = 1
     }
-    soutdout(){
-        console.log(this.color,this.area)
-    }
-}
-var a = new MyClass("haha",100,200);
-a.soutdout()
+],function(err,result){
+
+});

@@ -4,10 +4,13 @@
   "description": "url",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc":"tsc",
-    "tsc:w":"tsc -w"
+    "test": "node test.js",
+    "tsc": "tsc",
+    "tsc:w": "tsc -w"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "three",
+  "license": "ISC",
+  "devDependencies": {
+    "axel-js": "^0.1.8"
+  }
 }
