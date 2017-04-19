@@ -23,8 +23,9 @@ class ConfigManager{
     }
     private ReadCommand():void{
         fs.readFile(this.commandFilePath,'utf-8',(err,data)=>{
+            console.log(data)
             if(data.length>0){
-                var commands= data.split('\r\n');
+                var commands= data.split('\n');
                 console.log(commands);
                 //fs.writeFile(this.commandFilePath,"",function(){});
             }

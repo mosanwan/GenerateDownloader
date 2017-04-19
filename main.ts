@@ -8,7 +8,7 @@ class Main{
         this.manager.Init();
     }
     protected start(){
-
+        console.log("hello world")
     }
 }
 let main = new Main();
