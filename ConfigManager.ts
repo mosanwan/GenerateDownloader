@@ -6,11 +6,13 @@ import * as events from 'events'
 class ConfigManager extends events.EventEmitter{
     private commandFilePath:string = "./Commands.cfg";
     private statusFilePath:string = "./Status.cfg";
+    private currentOS:string;
     static _ins:ConfigManager;
     constructor(){
         super()
     }
-    public Init():void{
+    public Init(os:string):void{
+        this.currentOS=os;
         this.CheckFileExist();
         this.startReadCommndSchedule();
     }
@@ -25,7 +27,7 @@ class ConfigManager extends events.EventEmitter{
     private ReadCommand():void{
         fs.readFile(this.commandFilePath,'utf-8',(err,data)=>{
             if(data.length>0){
-                var commands= data.split('\r\n');
+                var commands= this.currentOS=="darwin"?data.split('\n'):data.split('\r\n');
                 for(let i=0;i<commands.length;i++){
                     this.emit("onCommand",commands[i]);
                 }
