@@ -1,13 +1,14 @@
 
 import * as fs from 'fs'
 import * as schedule from 'node-schedule'
+import * as events from 'events'
 
-class ConfigManager{
+class ConfigManager extends events.EventEmitter{
     private commandFilePath:string = "./Commands.cfg";
     private statusFilePath:string = "./Status.cfg";
     static _ins:ConfigManager;
     constructor(){
-        
+        super()
     }
     public Init():void{
         this.CheckFileExist();
@@ -25,8 +26,11 @@ class ConfigManager{
         fs.readFile(this.commandFilePath,'utf-8',(err,data)=>{
             if(data.length>0){
                 var commands= data.split('\r\n');
-                console.log(commands);
-                //fs.writeFile(this.commandFilePath,"",function(){});
+                for(let i=0;i<commands.length;i++){
+                    this.emit("onCommand",commands[i]);
+                }
+                
+                //fs.writeFile(this.commandFilePath,"",()=>{});
             }
         })
     }
