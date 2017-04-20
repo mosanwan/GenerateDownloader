@@ -13,7 +13,7 @@ class Main{
         })
     }
     protected start(){
-
+        console.log("hello world")
     }
 }
 let main = new Main();

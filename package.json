@@ -11,6 +11,8 @@
   "author": "three",
   "license": "ISC",
   "devDependencies": {
-    "axel-js": "^0.1.8"
+    "@types/node": "^7.0.13",
+    "async": "^2.3.0",
+    "node-schedule": "^1.2.1"
   }
 }
