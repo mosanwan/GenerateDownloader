@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/node": "^7.0.13",
     "async": "^2.3.0",
-    "node-schedule": "^1.2.1"
+    "node-schedule": "^1.2.1",
+    "node-uuid": "^1.4.8"
   }
 }

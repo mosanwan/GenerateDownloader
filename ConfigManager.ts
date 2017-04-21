@@ -27,7 +27,12 @@ class ConfigManager extends events.EventEmitter{
     private ReadCommand():void{
         fs.readFile(this.commandFilePath,'utf-8',(err,data)=>{
             if(data.length>0){
-                var commands= this.currentOS=="darwin"?data.split('\n'):data.split('\r\n');
+                var commands;
+                if(this.currentOS=="darwin"){
+                    commands = data.split('\n')
+                }else{
+                    commands = data.split('\r\n');
+                }
                 for(let i=0;i<commands.length;i++){
                     this.emit("onCommand",commands[i]);
                 }
@@ -53,15 +58,20 @@ class ConfigManager extends events.EventEmitter{
        }
     }
     private startReadCommndSchedule() {
-        var times = []
+        /*var times = []
         for (var i=0;i<60;i++){
             times.push(i);
         }
+        
         var rule = new schedule.RecurrenceRule();
         rule.second = times;
-        schedule.scheduleJob(rule,()=>{
-            this.ReadCommand()
-        })
+        chedule.scheduleJob(rule,function(){
+            //this.ReadCommand()
+            console.log('asdf')
+        })*/
+        setInterval(()=>{
+            this.ReadCommand();
+        },1000)
     }
 }
 export {ConfigManager}
