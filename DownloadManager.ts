@@ -1,10 +1,13 @@
 import * as uuid from 'node-uuid'
 import * as events from 'events'
+import * as http from "http"
+import {ConvertURLToOptions} from './Utils'
 class DownloadMission{
     status:string; //任务状态 DOWNLOADING 、WAITTING、PAUSED
     url:string;
     des:string;
     id:string;
+    contentSize:number;
     constructor(url,des){
         this.status = "WAITING";
         this.url=url;
@@ -33,12 +36,31 @@ class DownloadManager extends events.EventEmitter implements ICommandHandler{
         if(this.findMissionByUrl(url)==null){
             let ms = new DownloadMission(url,des);
             this.missions.push(ms);
-            console.log("添加任务 "+ms.id)
+            console.log("添加任务 "+ms.id);
+            let op:any =  ConvertURLToOptions(url);
+            console.log(op)
+            
+            var lengthReq = http.request(op,(res)=>{
+                if(res.statusCode!=200){
+                    console.log('资源出错'+url)
+                }
+                console.log(res.headers)
+                res.setEncoding('utf8');
+                res.on('data',(chunk)=>{
+                    console.log(res.headers['content-length']);
+                    ms.contentSize=parseInt(res.headers['content-length']);
+                    console.log(ms.contentSize/(1024*1024*10));
+                    lengthReq.abort()
+                    this.emit('post-mission');
+                })
+                res.on('error',(err)=>{
+                    console.log("请求资源大小失败"+url)
+                })
+            });
+            lengthReq.end();
         }else{
             console.log("重复任务 ")
         }
-        
-        
     }
     findMissionById(id:string):DownloadMission{
         for(var i = 0;i<this.missions.length;i++){
@@ -59,4 +81,4 @@ class DownloadManager extends events.EventEmitter implements ICommandHandler{
     
 
 }
-export {DownloadManager}
+export {DownloadManager,DownloadMission}

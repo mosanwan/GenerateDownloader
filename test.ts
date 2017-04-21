@@ -27,6 +27,7 @@ var req = http.request(options,function(res){
 })
 req.end()
 
+
 var rule = new schedule.RecurrenceRule();
 rule.seconds = [1,2,3,4,5,6,7,8,9,10]
 var job = schedule.scheduleJob(rule,function(){
