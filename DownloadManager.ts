@@ -2,17 +2,25 @@ import * as uuid from 'node-uuid'
 import * as events from 'events'
 import * as http from "http"
 import {ConvertURLToOptions} from './Utils'
+import {DownloadAgent} from "./DownloadAgent"
+const mission_chunk_size:number = (1024*1024*10);//单个任务长度
 class DownloadMission{
     status:string; //任务状态 DOWNLOADING 、WAITTING、PAUSED
     url:string;
     des:string;
     id:string;
     contentSize:number;
+    downloadedSize:number = 0;
+    sliceStatus = [];
     constructor(url,des){
         this.status = "WAITING";
         this.url=url;
         this.des=des;
         this.id = uuid.v1();
+    }
+    sliceMission(){
+        let mission_num = Math.ceil(this.contentSize/ mission_chunk_size)
+        console.log(" 数量 "+mission_num);
     }
 }
 class DownloadManager extends events.EventEmitter implements ICommandHandler{
@@ -22,8 +30,12 @@ class DownloadManager extends events.EventEmitter implements ICommandHandler{
         return this._ins;
     }
     missions=[];
+    agents = [];
     constructor(){
-        super()
+        super();
+        for(let i =0;i<10;i++){
+            this.agents.push(new DownloadAgent(this));
+        }
     }
     HandleCommand(command:string):void{
         let cmdlist = command.split(" ");
@@ -38,28 +50,30 @@ class DownloadManager extends events.EventEmitter implements ICommandHandler{
             this.missions.push(ms);
             console.log("添加任务 "+ms.id);
             let op:any =  ConvertURLToOptions(url);
-            console.log(op)
-            
             var lengthReq = http.request(op,(res)=>{
                 if(res.statusCode!=200){
                     console.log('资源出错'+url)
                 }
-                console.log(res.headers)
                 res.setEncoding('utf8');
                 res.on('data',(chunk)=>{
-                    console.log(res.headers['content-length']);
                     ms.contentSize=parseInt(res.headers['content-length']);
-                    console.log(ms.contentSize/(1024*1024*10));
                     lengthReq.abort()
                     this.emit('post-mission');
                 })
                 res.on('error',(err)=>{
                     console.log("请求资源大小失败"+url)
                 })
+                res.on('end',()=>{
+                    console.log('end')
+                    ms.sliceMission();
+                })
             });
+            lengthReq.setTimeout(5000,()=>{
+                console.log('请求超时')
+            })
             lengthReq.end();
         }else{
-            console.log("重复任务 ")
+            console.log("重复任务")
         }
     }
     findMissionById(id:string):DownloadMission{
